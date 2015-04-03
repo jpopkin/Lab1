@@ -71,6 +71,8 @@ struct Game {
 	int lastMouse[2];
            ~Game() { delete [] particle; }
 	Game() {
+
+	    bubbler = false;
             particle = new Particle[MAX_PARTICLES];	
 	    n=0;
 
@@ -226,13 +228,16 @@ void check_mouse(XEvent *e, Game *game)
 	if (savex != e->xbutton.x || savey != e->xbutton.y) {
 		savex = e->xbutton.x;
 		savey = e->xbutton.y;
-		
+
 		if (++n < 10)
 		return;
 
 		int y = WINDOW_HEIGHT - e->xbutton.y;
 		for(int i=0; i<10; i++) {
 		    makeParticle(game, e->xbutton.x, y);
+
+		    game->lastMouse[0]= savex;
+		    game->lastMouse[1]= WINDOW_HEIGHT - savey;
 		}
 	}
 }
@@ -252,13 +257,8 @@ int check_keys(XEvent *e, Game *game)
 		}
 
 
-		if(e->type !=KeyPress) {
-		    int y= WINDOW_HEIGHT - e->xbutton.y;
-		   for(int i=0; i<10; i++) {
-		    makeParticle(game, e->xbutton.x, y);
-		   }
-		}
-
+             
+               
 	       if(key== XK_b) {
 
 		   game->bubbler = !game->bubbler;
@@ -273,6 +273,17 @@ int check_keys(XEvent *e, Game *game)
 
 void movement(Game *game)
 {
+
+
+
+
+
+if(game->bubbler) {
+    for(int i = 0; i<10; i++) {
+	makeParticle(game, game->lastMouse[0], game->lastMouse[1]);
+    }
+}
+
 	Particle *p;
 
 	if (game->n <= 0)
@@ -302,15 +313,25 @@ void movement(Game *game)
 
 	//check for off-screen
 	if (p->s.center.y < 0.0) {
-                  
+
+
+       if(game->n > 1) {
+
 	        memcpy(&game->particle[i], &game->particle[game->n-1], 
-			                          sizeof(Particle));
+				                          sizeof(Particle));
+       }
+
+     
+   
         	std::cout << "off screen" << std::endl;
+		
+		std::cout << game->n << std::endl;
 		game->n--;
 	}
-}
 
 }
+}
+
 
 void render(Game *game)
 {
