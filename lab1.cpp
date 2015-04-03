@@ -67,6 +67,8 @@ struct Game {
 	Shape box[5];
 	Particle *particle;
 	int n;
+	bool bubbler;
+	int lastMouse[2];
            ~Game() { delete [] particle; }
 	Game() {
             particle = new Particle[MAX_PARTICLES];	
@@ -92,8 +94,14 @@ void movement(Game *game);
 void render(Game *game);
 
 
+
 int main(void)
 {
+
+
+
+      	
+        
 	int done=0;
 	srand(time(NULL));
 	initXWindows();
@@ -207,7 +215,7 @@ void check_mouse(XEvent *e, Game *game)
 			return;
 		}
 		if (e->xbutton.button==3) {
-			//Right button was pressed
+		//	Game->bubbler = true;
 			return;
 		}
 	}
@@ -250,6 +258,12 @@ int check_keys(XEvent *e, Game *game)
 		    makeParticle(game, e->xbutton.x, y);
 		   }
 		}
+
+	       if(key== XK_b) {
+
+		   game->bubbler = !game->bubbler;
+	       }
+
 
 		//You may check other keys here.
 
