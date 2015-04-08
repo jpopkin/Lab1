@@ -38,7 +38,7 @@
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
 
-#define MAX_PARTICLES 4000
+#define MAX_PARTICLES 8000
 #define GRAVITY 0.1
 
 //X Windows variables
@@ -85,7 +85,7 @@ struct Game {
 	box[i].center.y = 500 - i*60;
 	
 	}
-	circle.radius = 100.0;
+	circle.radius = 170.0;
 	circle.center.x = 500;
 	circle.center.y = 0;
 	}
@@ -318,14 +318,20 @@ if(game->bubbler) {
 
 float d0, d1, dist;
 d0 = p-> s.center.x - game-> circle.center.x;
-
 d1 = p-> s.center.y - game-> circle.center.y;
 dist = sqrt(d0*d0 + d1*d1);
 if(dist < game->circle.radius) {
+
+//move partucle to circle edge
+
+    p->s.center.x = game->circle.center.x + (d0/dist) * game->circle.radius * 1.01;
+    p->s.center.y = game->circle.center.y + (d1/dist) * game->circle.radius * 1.01;
+
+
     //circle collision! appy a penalty to the particle.
 
-p->velocity.x += d0/dist;
-p->velocity.y += d1/dist;
+p->velocity.x += d0/dist * 2.0;
+p->velocity.y += d1/dist * 2.0;
 
 }
 
