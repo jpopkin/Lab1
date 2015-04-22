@@ -132,6 +132,7 @@ int main(void)
 		glXSwapBuffers(dpy, win);
 	}
 	cleanupXWindows();
+	cleanup_fonts();
 	return 0;
 }
 
@@ -188,6 +189,8 @@ void init_opengl(void)
 	glOrtho(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT, -1, 1);
 	//Set the screen background color
 	glClearColor(0.1, 0.1, 0.1, 1.0);
+	glEnable(GL_TEXTURE_2D);
+	initialize_fonts();
 }
 
 #define rnd() (float)rand() / (float)RAND_MAX
@@ -418,15 +421,14 @@ for(int i=0; i<5; i++) {
 
 for(int i=0; i< 5; i++) {
 
-s=&game->box[i];
 r[i].bot = s->center.y-10;
 r[i].left = s->center.x;
 r[i].center = 1;
-int cref = 0xfcd331;
+int cref = 0x00ffffff;
 
-if(i==0)
-ggprint16(&r[i], 16, cref, "req");
-
+if(i==0){
+ggprint16(&r[i], 16, cref, "Requirments");
+}
 }
 	//draw all particles here
 	glPushMatrix();
