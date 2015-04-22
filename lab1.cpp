@@ -34,7 +34,9 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
+extern "C" {
 #include "fonts.h"
+}
 
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
@@ -361,7 +363,8 @@ p->velocity.y += d1/dist * 2.0;
 
 void render(Game *game)
 {
-	float w, h;
+	Rect r[6];
+        float w, h;
 	glClear(GL_COLOR_BUFFER_BIT);
 	//Draw shapes...
 
@@ -395,8 +398,8 @@ void render(Game *game)
 
 	//draw box
 	Shape *s;
-	glColor3ub(90,140,90);
 for(int i=0; i<5; i++) {
+	glColor3ub(90,140,90);
 	s = &game->box[i];
 
 	glPushMatrix();
@@ -410,6 +413,20 @@ for(int i=0; i<5; i++) {
 		glVertex2i( w,-h);
 	glEnd();
 	glPopMatrix();
+}
+
+
+for(int i=0; i< 5; i++) {
+
+s=&game->box[i];
+r[i].bot = s->center.y-10;
+r[i].left = s->center.x;
+r[i].center = 1;
+int cref = 0xfcd331;
+
+if(i==0)
+ggprint16(&r[i], 16, cref, "req");
+
 }
 	//draw all particles here
 	glPushMatrix();
