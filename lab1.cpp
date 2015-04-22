@@ -34,6 +34,7 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
+#include "fonts.h"
 
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
@@ -428,6 +429,3 @@ for(int i=0; i<5; i++) {
 	glPopMatrix();
 }
 
-
-# Lab-1
-# Lab1
