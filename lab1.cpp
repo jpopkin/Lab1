@@ -73,24 +73,24 @@ struct Game {
 	int n;
 	bool bubbler;
 	int lastMouse[2];
-           ~Game() { delete [] particle; }
+	~Game() { delete [] particle; }
 	Game() {
 
-	    bubbler = false;
-            particle = new Particle[MAX_PARTICLES];	
-	    n=0;
+		bubbler = false;
+		particle = new Particle[MAX_PARTICLES];	
+		n=0;
 
-	//declare a box shape
-	for(int i=0; i<5; i++) {
-	box[i].width = 100;
-        box[i].height = 10;
-	box[i].center.x = 120 + i*65;
-	box[i].center.y = 500 - i*60;
-	
-	}
-	circle.radius = 170.0;
-	circle.center.x = 500;
-	circle.center.y = 0;
+		//declare a box shape
+		for(int i=0; i<5; i++) {
+			box[i].width = 100;
+			box[i].height = 10;
+			box[i].center.x = 120 + i*65;
+			box[i].center.y = 500 - i*60;
+
+		}
+		circle.radius = 170.0;
+		circle.center.x = 500;
+		circle.center.y = 0;
 	}
 };
 
@@ -102,16 +102,12 @@ void check_mouse(XEvent *e, Game *game);
 int check_keys(XEvent *e, Game *game);
 void movement(Game *game);
 void render(Game *game);
-
+bool Dtrue;
 
 
 int main(void)
 {
 
-
-
-      	
-        
 	int done=0;
 	srand(time(NULL));
 	initXWindows();
@@ -168,11 +164,11 @@ void initXWindows(void) {
 	XSetWindowAttributes swa;
 	swa.colormap = cmap;
 	swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask |
-							ButtonPress | ButtonReleaseMask |
-							PointerMotionMask |
-							StructureNotifyMask | SubstructureNotifyMask;
+		ButtonPress | ButtonReleaseMask |
+		PointerMotionMask |
+		StructureNotifyMask | SubstructureNotifyMask;
 	win = XCreateWindow(dpy, root, 0, 0, w, h, 0, vi->depth,
-					InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
+			InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
 	set_title();
 	glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
 	glXMakeCurrent(dpy, win, glc);
@@ -223,12 +219,12 @@ void check_mouse(XEvent *e, Game *game)
 			int y = WINDOW_HEIGHT - e->xbutton.y;
 			for(int i=0; i<10; i++)
 			{
-			    makeParticle(game, e->xbutton.x, y);
+				makeParticle(game, e->xbutton.x, y);
 			}
 			return;
 		}
 		if (e->xbutton.button==3) {
-		//	Game->bubbler = true;
+			//	Game->bubbler = true;
 			return;
 		}
 	}
@@ -241,21 +237,21 @@ void check_mouse(XEvent *e, Game *game)
 		savey = e->xbutton.y;
 
 		if (++n < 10)
-		return;
+			return;
 
 		int y = WINDOW_HEIGHT - e->xbutton.y;
 		for(int i=0; i<10; i++) {
-		    makeParticle(game, e->xbutton.x, y);
+			makeParticle(game, e->xbutton.x, y);
 
-		    game->lastMouse[0]= savex;
-		    game->lastMouse[1]= WINDOW_HEIGHT - savey;
+			game->lastMouse[0]= savex;
+			game->lastMouse[1]= WINDOW_HEIGHT - savey;
 		}
 	}
 }
 
 
-		
-	
+
+
 
 
 int check_keys(XEvent *e, Game *game)
@@ -268,12 +264,19 @@ int check_keys(XEvent *e, Game *game)
 		}
 
 
-             
-               
-	       if(key== XK_b) {
 
-		   game->bubbler = !game->bubbler;
-	       }
+
+		if(key== XK_b) {
+
+			game->bubbler = !game->bubbler;
+		}
+
+		if(key==XK_d) {
+
+                  Dtrue = !Dtrue;
+
+
+}
 
 
 		//You may check other keys here.
@@ -289,11 +292,11 @@ void movement(Game *game)
 
 
 
-if(game->bubbler) {
-    for(int i = 0; i<10; i++) {
-	makeParticle(game, game->lastMouse[0], game->lastMouse[1]);
-    }
-}
+	if(game->bubbler) {
+		for(int i = 0; i<10; i++) {
+			makeParticle(game, game->lastMouse[0], game->lastMouse[1]);
+		}
+	}
 
 	Particle *p;
 
@@ -301,73 +304,83 @@ if(game->bubbler) {
 		return;
 
 	for(int i=0; i<game->n; i++) {
-	    p = &game->particle[i];
-	p->s.center.x += p->velocity.x;
-	p->s.center.y += p->velocity.y;
-        p->velocity.y -= GRAVITY;
-	//check for collision with shapes...
-	//Shape *s;
-
- for(int j=0; j<5; j++) {
-
-       if (p->s.center.x >= game->box[j].center.x - game->box[j].width &&
-	       p->s.center.x <= game->box[j].center.x + game->box[j].width &&
-	        p->s.center.y < game->box[j].center.y + game->box[j].height &&
-		p->s.center.y > game->box[j].center.y - game->box[j].height)
-       {
-           p->s.center.y=game->box[j].center.y + game->box[j].height +0.1;	   
-   	   p->velocity.y *= -.5;
-       }	
- }
-        
+		p = &game->particle[i];
+		p->s.center.x += p->velocity.x;
+		p->s.center.y += p->velocity.y;
+		p->velocity.y -= GRAVITY;
+		//check for collision with shapes...
+		//Shape *s;
 
 
-float d0, d1, dist;
-d0 = p-> s.center.x - game-> circle.center.x;
-d1 = p-> s.center.y - game-> circle.center.y;
-dist = sqrt(d0*d0 + d1*d1);
-if(dist < game->circle.radius) {
-
-//move partucle to circle edge
-
-    p->s.center.x = game->circle.center.x + (d0/dist) * game->circle.radius * 1.01;
-    p->s.center.y = game->circle.center.y + (d1/dist) * game->circle.radius * 1.01;
-
-
-    //circle collision! appy a penalty to the particle.
-
-p->velocity.x += d0/dist * 2.0;
-p->velocity.y += d1/dist * 2.0;
-
+	if(Dtrue) {
+		p = &game->particle[i];
+		p->s.center.x += p->velocity.x;
+		p->s.center.y += p->velocity.y;
+		p->velocity.y -= GRAVITY;
+	
 }
+		for(int j=0; j<5; j++) {
+
+			if (p->s.center.x >= game->box[j].center.x - game->box[j].width &&
+					p->s.center.x <= game->box[j].center.x + game->box[j].width &&
+					p->s.center.y < game->box[j].center.y + game->box[j].height &&
+					p->s.center.y > game->box[j].center.y - game->box[j].height)
+			{
+				p->s.center.y=game->box[j].center.y + game->box[j].height +0.1;	   
+				p->velocity.y *= -.5;
+			}
+           if(p->velocity.x<0.0)
+p->velocity.x *= -.55;	
+		}
 
 
-	//check for off-screen
-	if (p->s.center.y < 0.0) {
+
+		float d0, d1, dist;
+		d0 = p-> s.center.x - game-> circle.center.x;
+		d1 = p-> s.center.y - game-> circle.center.y;
+		dist = sqrt(d0*d0 + d1*d1);
+		if(dist < game->circle.radius) {
+
+			//move partucle to circle edge
+
+			p->s.center.x = game->circle.center.x + (d0/dist) * game->circle.radius * 1.01;
+			p->s.center.y = game->circle.center.y + (d1/dist) * game->circle.radius * 1.01;
 
 
-       if(game->n > 1) {
+			//circle collision! appy a penalty to the particle.
 
-	        memcpy(&game->particle[i], &game->particle[game->n-1], 
-				                          sizeof(Particle));
-       }
+			p->velocity.x += d0/dist * 2.0;
+			p->velocity.y += d1/dist * 2.0;
 
-     
-   
-        	std::cout << "off screen" << std::endl;
-		
-		std::cout << game->n << std::endl;
-		game->n--;
+		}
+
+
+		//check for off-screen
+		if (p->s.center.y < 0.0) {
+
+
+			if(game->n > 1) {
+
+				memcpy(&game->particle[i], &game->particle[game->n-1], 
+						sizeof(Particle));
+			}
+
+
+
+			std::cout << "off screen" << std::endl;
+
+			std::cout << game->n << std::endl;
+			game->n--;
+		}
+
 	}
-
-}
 }
 
 
 void render(Game *game)
 {
 	Rect r[6];
-        float w, h;
+	float w, h;
 	glClear(GL_COLOR_BUFFER_BIT);
 	//Draw shapes...
 
@@ -378,72 +391,91 @@ void render(Game *game)
 	static int firsttime =1;
 	static Vec vert[n];
 	if(firsttime) {
-	float ang = 0.0, inc =(3.14159 * 2.0) / (float) n;
-	for (int i = 0; i<n; i++) {
-	    vert[i].x = cos(ang) * game->circle.radius;
-	    vert[i].y = sin(ang) * game->circle.radius;
-	    ang += inc;
-	}
-	firsttime=0;
-}	
+		float ang = 0.0, inc =(3.14159 * 2.0) / (float) n;
+		for (int i = 0; i<n; i++) {
+			vert[i].x = cos(ang) * game->circle.radius;
+			vert[i].y = sin(ang) * game->circle.radius;
+			ang += inc;
+		}
+		firsttime=0;
+	}	
 
-//draw circle
-        glColor3ub(255,255,255);
-	glBegin(GL_LINE_LOOP);
-        for(int i =0; i<n; i++){
-	    glVertex2i(game->circle.center.x + vert[i].x,
-		   game->circle.center.y + vert[i].y);
+	//draw circle
+		
+	glColor3ub(221,72,20); //Ubuntu Orange
+	glBegin(GL_TRIANGLE_FAN);
+	for(int i =0; i<n; i++){
+		glVertex2i(game->circle.center.x + vert[i].x,
+				game->circle.center.y + vert[i].y);
 	}
 
 	glEnd();
-	
+
 
 
 	//draw box
 	Shape *s;
-for(int i=0; i<5; i++) {
-	glColor3ub(90,140,90);
-	s = &game->box[i];
-
-	glPushMatrix();
-	glTranslatef(s->center.x, s->center.y, s->center.z);
-	w = s->width;
-	h = s->height;
-	glBegin(GL_QUADS);
+	for(int i=0; i<5; i++) {
+		s = &game->box[i];
+		glColor3ub(221,72,20); //Ubuntu Orange
+		glPushMatrix();
+		glTranslatef(s->center.x, s->center.y, s->center.z);
+		w = s->width;
+		h = s->height;
+		glBegin(GL_QUADS);
 		glVertex2i(-w,-h);
 		glVertex2i(-w, h);
 		glVertex2i( w, h);
 		glVertex2i( w,-h);
-	glEnd();
-	glPopMatrix();
+		glEnd();
+		glPopMatrix();
+	}
+
+
+
+            if(Dtrue) {
+		r[5].bot = WINDOW_HEIGHT-500;
+		r[5].left = 10;
+		r[5].center = 0;
+		ggprint16(&r[5], 120, 0xffffff, "'d' has been pressed.. double time!");
 }
+	for(int j=0; j < 5; j++) {
+		s=&game->box[j];
+		r[j].bot = s->center.y-10;
+		r[j].left = s->center.x;
+		r[j].center = 1;
+		int cref = 0xFFFFFF;
+		if(j==0){
+			ggprint16(&r[j], 16, cref, "Requirments");
+		}
 
-
-for(int i=0; i< 5; i++) {
-
-r[i].bot = s->center.y-10;
-r[i].left = s->center.x;
-r[i].center = 1;
-int cref = 0x00ffffff;
-
-if(i==0){
-ggprint16(&r[i], 16, cref, "Requirments");
-}
-}
+		if(j==1) {
+			ggprint16(&r[j],16,cref,"Design");
+		}
+		if(j==2) {
+			ggprint16(&r[j],16,cref,"Coding");
+		}
+		if(j==3) {
+			ggprint16(&r[j],16,cref,"Testing");
+		}
+		if(j==4) {
+			ggprint16(&r[j],16,cref,"Maintenance");
+		}
+	}
 	//draw all particles here
 	glPushMatrix();
 	glColor3ub(150,160,220);
-	
+
 	for(int i=0; i<game->n; i++) {
-	Vec *c = &game->particle[i].s.center;
-	w = 2;
-	h = 2;
-	glBegin(GL_QUADS);
+		Vec *c = &game->particle[i].s.center;
+		w = 2;
+		h = 2;
+		glBegin(GL_QUADS);
 		glVertex2i(c->x-w, c->y-h);
 		glVertex2i(c->x-w, c->y+h);
 		glVertex2i(c->x+w, c->y+h);
 		glVertex2i(c->x+w, c->y-h);
-	glEnd();
+		glEnd();
 	}
 	glPopMatrix();
 }
